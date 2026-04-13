@@ -8,6 +8,7 @@ testdata/
 .cursor
 .DS_Store
 */.DS_Store
+Thumbs.db
 
 Dockerfile
 Dockerfile.dev
@@ -91,3 +92,7 @@ codegen/nonext/
 local_testing
 dist-server
 scripts/build.go
+
+# Built Go binary
+/seanime
+/seanime.exe

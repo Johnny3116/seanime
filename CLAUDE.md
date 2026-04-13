@@ -5,7 +5,7 @@
 Seanime is a cross-platform media server with a web interface and desktop app for managing local anime/manga libraries, streaming, and torrent integration.
 
 - **Backend**: Go (Echo HTTP framework, SQLite via GORM, Goja JS runtime for plugins)
-- **Frontend**: React + Vite/Rsbuild + Tanstack Router, located in `seanime-web/`
+- **Frontend**: React + Rsbuild + Tanstack Router, located in `seanime-web/`
 - **Desktop app**: Electron-based client in `seanime-denshi/` and `electron/`
 
 ## Development Setup
@@ -65,7 +65,9 @@ go generate ./codegen/main.go
 Generated files:
 - `seanime-web/src/api/generated/types.ts`
 - `seanime-web/src/api/generated/endpoint.types.ts`
+- `seanime-web/src/api/generated/endpoints.ts`
 - `seanime-web/src/api/generated/hooks_template.ts`
+- `seanime-web/src/api/generated/queries_tmpl.ts`
 
 ### AniList GraphQL
 
@@ -102,6 +104,6 @@ Tests use `test_utils.InitTestProvider(t, ...)` for initialization.
 
 ## Branch Strategy
 
-- Active development happens on `main` (or the current release branch)
-- Feature branches: `<feature-name>` off `main`
-- This dev branch: `claude/create-dev-branch-claude-md-pQsd4`
+- `main` — stable releases only
+- `dev` — active integration branch; work here before merging to `main`
+- Feature branches: `<feature-name>` off `dev`
