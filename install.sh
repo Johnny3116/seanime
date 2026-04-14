@@ -6,19 +6,23 @@ set -euo pipefail
 # ─── Colors ───────────────────────────────────────────────────────────────────
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 BOLD='\033[1m'
 NC='\033[0m'
 
 log()  { echo -e "${BLUE}==>${NC} ${BOLD}$*${NC}"; }
 ok()   { echo -e "${GREEN}  ✓${NC} $*"; }
-warn() { echo -e "${YELLOW}  !${NC} $*"; }
 fail() { echo -e "${RED}  ✗ ERROR:${NC} $*" >&2; exit 1; }
 
 REQUIRED_GO_MAJOR=1
-REQUIRED_GO_MINOR=23
+REQUIRED_GO_MINOR=26
 REQUIRED_NODE_MAJOR=18
+
+# ─── Working directory guard ──────────────────────────────────────────────────
+
+if [[ ! -f "go.mod" || ! -d "seanime-web" ]]; then
+    fail "Must be run from the project root (the directory containing go.mod and seanime-web/)"
+fi
 
 # ─── Prerequisite checks ──────────────────────────────────────────────────────
 
@@ -67,7 +71,10 @@ cd ..
 
 log "Step 2/5 — Building frontend (this may take a minute)..."
 cd seanime-web
-npm run build
+# SEA_PUBLIC_PLATFORM=web ensures the build targets the browser web app.
+# Without it SEA_PUBLIC_PLATFORM is unset, which is functionally equivalent
+# (isDesktop = false, output path = out/) but explicit is better.
+SEA_PUBLIC_PLATFORM=web npm run build
 ok "Frontend built → seanime-web/out"
 cd ..
 

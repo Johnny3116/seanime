@@ -2,7 +2,8 @@
 # Run from the project root: .\install.ps1
 #
 # Optional flags:
-#   -NoSystemTray    Build without Windows system tray (used by the desktop app)
+#   -NoSystemTray    Build without Windows system tray (used by the desktop app).
+#                    Does not require a C compiler.
 #
 # Example:
 #   .\install.ps1
@@ -15,12 +16,19 @@ param(
 $ErrorActionPreference = "Stop"
 
 $REQUIRED_GO_MAJOR   = 1
-$REQUIRED_GO_MINOR   = 23
+$REQUIRED_GO_MINOR   = 26
 $REQUIRED_NODE_MAJOR = 18
 
 function Log  { param($msg) Write-Host "==> $msg" -ForegroundColor Cyan }
 function Ok   { param($msg) Write-Host "  + $msg" -ForegroundColor Green }
+function Warn { param($msg) Write-Host "  ! $msg" -ForegroundColor Yellow }
 function Fail { param($msg) Write-Host "  X ERROR: $msg" -ForegroundColor Red; exit 1 }
+
+# ─── Working directory guard ──────────────────────────────────────────────────
+
+if (-not (Test-Path "go.mod") -or -not (Test-Path "seanime-web")) {
+    Fail "Must be run from the project root (the directory containing go.mod and seanime-web\)"
+}
 
 # ─── Prerequisite checks ──────────────────────────────────────────────────────
 
@@ -56,6 +64,16 @@ if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
 }
 Ok "npm $(npm --version)"
 
+# C compiler (only required for the system tray build)
+if (-not $NoSystemTray) {
+    if (-not (Get-Command gcc -ErrorAction SilentlyContinue)) {
+        Warn "gcc not found. The system tray build requires a C compiler (e.g. MinGW-w64)."
+        Warn "Install from https://www.mingw-w64.org or rerun with -NoSystemTray to skip."
+        Fail "C compiler required for system tray build. Use -NoSystemTray to build without it."
+    }
+    Ok "gcc $(gcc --version | Select-String -Pattern '\d+\.\d+\.\d+' | ForEach-Object { $_.Matches[0].Value })"
+}
+
 Write-Host ""
 
 # ─── Step 1: Frontend dependencies ───────────────────────────────────────────
@@ -63,7 +81,7 @@ Write-Host ""
 Log "Step 1/5 — Installing frontend dependencies..."
 Push-Location seanime-web
 npm install
-if ($LASTEXITCODE -ne 0) { Fail "npm install failed" }
+if ($LASTEXITCODE -ne 0) { Pop-Location; Fail "npm install failed" }
 Ok "Dependencies installed"
 Pop-Location
 
@@ -71,8 +89,10 @@ Pop-Location
 
 Log "Step 2/5 — Building frontend (this may take a minute)..."
 Push-Location seanime-web
+# SEA_PUBLIC_PLATFORM=web ensures the build targets the browser web app.
+$env:SEA_PUBLIC_PLATFORM = "web"
 npm run build
-if ($LASTEXITCODE -ne 0) { Fail "Frontend build failed" }
+if ($LASTEXITCODE -ne 0) { Pop-Location; Fail "Frontend build failed" }
 Ok "Frontend built -> seanime-web\out"
 Pop-Location
 
@@ -97,7 +117,7 @@ if ($NoSystemTray) {
     # Used by the Electron desktop app — no system tray, no CGO requirement
     go build -o seanime.exe -trimpath -ldflags="-s -w" -tags=nosystray
 } else {
-    # Standard Windows build with system tray (requires a C compiler, e.g. MinGW)
+    # Standard Windows build with system tray (requires CGO + C compiler)
     $env:CGO_ENABLED = "1"
     go build -o seanime.exe -trimpath -ldflags="-s -w -H=windowsgui -extldflags '-static'"
 }

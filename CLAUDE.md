@@ -4,7 +4,7 @@
 
 Seanime is a cross-platform media server with a web interface and desktop app for managing local anime/manga libraries, streaming, and torrent integration.
 
-- **Backend**: Go (Echo HTTP framework, SQLite via GORM, Goja JS runtime for plugins)
+- **Backend**: Go 1.26+ (Echo HTTP framework, SQLite via GORM, Goja JS runtime for plugins)
 - **Frontend**: React + Rsbuild + Tanstack Router, located in `seanime-web/`
 - **Desktop app**: Electron-based client in `seanime-denshi/` and `electron/`
 
