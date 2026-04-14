@@ -12,7 +12,7 @@
     * Torrent streaming: [anacrolix/torrent](https://github.com/anacrolix/torrent) for Bittorrent client
     * OS Integration: [Fyne](https://github.com/fyne-io/systray) for Windows system tray management
     * MKV Parser: Fork of [matroska-go](https://github.com/luispater/matroska-go)
-* Frontend: Built with [React](https://reactjs.org/), [Vite](https://vitejs.dev/), and [Tanstack Router](https://tanstack.com/router)
+* Frontend: Built with [React](https://reactjs.org/), [Rsbuild](https://rsbuild.dev/), and [Tanstack Router](https://tanstack.com/router)
 	* UI Library: Custom components built with [Tailwind](https://tailwindcss.com/) and [Radix UI](https://www.radix-ui.com/)
 	* Data Fetching: [React Query](https://tanstack.com/query/latest)
 	* State Management: [Jotai](https://jotai.org/) for global state
@@ -21,7 +21,7 @@
 
 ## Prerequisites
 
-- Go 1.23+
+- Go 1.26+
 - Node.js 18+ and npm
 
 ## Build Process
@@ -67,7 +67,7 @@ Choose the appropriate command based on your target platform:
 
 The project is built with:
 - Backend: Go server with REST API endpoints
-- Frontend: React + Vite + Tanstack Router
+- Frontend: React + Rsbuild + Tanstack Router
 
 For development, you should be familiar with both Go and React.
 
@@ -111,8 +111,8 @@ For development, you should be familiar with both Go and React.
 
    The development web interface will be accessible at `http://127.0.0.1:43210`.
 
-**Note**: During development, the web interface is served by the Next.js development server on port `43210`.
-The Next.js development environment is configured such that all requests are made to the Go server running on port `43000`.
+**Note**: During development, the web interface is served by the Rsbuild development server on port `43210`.
+The Rsbuild dev server is configured to proxy API requests to the Go server running on port `43000`.
 
 ### Understanding the Codebase Architecture
 
