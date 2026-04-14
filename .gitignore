@@ -8,6 +8,7 @@ testdata/
 .cursor
 .DS_Store
 */.DS_Store
+Thumbs.db
 
 Dockerfile
 Dockerfile.dev
@@ -84,6 +85,7 @@ internal/extension_repo/**/test*.ts
 internal/extension_repo/goja_plugin_test
 
 *.sh
+!/install.sh
 
 seanime-web-tr/
 codegen/nonext/
@@ -91,3 +93,7 @@ codegen/nonext/
 local_testing
 dist-server
 scripts/build.go
+
+# Built Go binary
+/seanime
+/seanime.exe
